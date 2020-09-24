@@ -33,7 +33,6 @@
             // initialisation
             this.grid = document.querySelector('.board .main-grid');
             this.miniGrid = document.querySelector('.mini-grid');
-            console.log(this.miniGrid);
 
             // défini l'ordre des phase de jeu
             this.phaseOrder = [
@@ -219,7 +218,7 @@
             this.players[0].renderTries(this.grid);
         },
         renderMiniMap: function () {
-            
+            this.players[0].colorMiniMap(this.miniGrid);
         }
     };
 

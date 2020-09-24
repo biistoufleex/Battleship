@@ -47,12 +47,10 @@
             ship.dom.style.opacity = '0';
             while (i < ship.getLife()) {
                 this.grid[y][x + i]  = ship.getId();
-                this.tries[y][x + i] = ship.getId();
                 ship.position.push([y, x + i]);
                 i += 1;
             }
             console.log(this.grid);
-            console.log(this.tries);
 
             return true;
         },
@@ -94,7 +92,20 @@
         },
         setGame: function (game) {
             this.game = game;
-        }
+        },
+        colorMiniMap: function (grid) {
+            console.log(this.fleet);
+            for (let i = 0; i < this.fleet.length; i++) {
+                for (let j = 0; j < this.fleet[i].position.length; j++) {
+                    if (i === this.fleet.length -1) {
+                        grid.children[this.fleet[i].position[j][0]].children[this.fleet[i].position[j][1] -1].style.backgroundColor = this.fleet[i].color;
+                    } else {
+                        grid.children[this.fleet[i].position[j][0]].children[this.fleet[i].position[j][1] -2].style.backgroundColor = this.fleet[i].color;
+                    }
+
+                }
+            }
+        },
     };
 
     global.player = player;
