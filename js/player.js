@@ -41,8 +41,10 @@
         },
         setActiveShipPosition: function (x, y) {
             var ship = this.fleet[this.activeShip];
+            console.log(ship);
             var i = 0;
-
+            // on passe les ship en transparent au click 
+            ship.dom.style.opacity = '0';
             while (i < ship.getLife()) {
                 this.grid[y][x + i] = ship.getId();
                 i += 1;
