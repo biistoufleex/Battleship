@@ -46,9 +46,13 @@
             // on passe les ship en transparent au click 
             ship.dom.style.opacity = '0';
             while (i < ship.getLife()) {
-                this.grid[y][x + i] = ship.getId();
+                this.grid[y][x + i]  = ship.getId();
+                this.tries[y][x + i] = ship.getId();
+                ship.position.push([y, x + i]);
                 i += 1;
             }
+            console.log(this.grid);
+            console.log(this.tries);
 
             return true;
         },

@@ -20,6 +20,13 @@
         name: null,
         id: null,
         dom: null,
+        position: [],
+        setPosition: function (position) {
+            this.position = position;
+        },
+        getPosition: function () {
+            return this.position;
+        },
         setName: function (name) {
             this.name = name;
         },
@@ -43,6 +50,7 @@
         },
         init: function () {
             this.id = getShipNewIndex();
+            this.position = [];
 
             this.dom = document.createElement('div');
             this.dom.style.height = "" + utils.CELL_SIZE + "px";
