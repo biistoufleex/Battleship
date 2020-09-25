@@ -168,7 +168,7 @@
                 // si on est dans la phase de placement des bateau
                 if (this.getPhase() === this.PHASE_INIT_PLAYER) {
                     // on enregistre la position du bateau, si cela se passe bien (la fonction renvoie true) on continue
-                    if (this.players[0].setActiveShipPosition(utils.eq(e.target), utils.eq(e.target.parentNode))) {
+                    if (this.players[0].setActiveShipPosition(utils.eq(e.target), utils.eq(e.target.parentNode),this.RIGHT_CLICK)) {
                         // et on passe au bateau suivant (si il n'y en plus la fonction retournera false)
                         if (!this.players[0].activateNextShip()) {
                             this.wait();
