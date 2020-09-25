@@ -21,6 +21,7 @@
         id: null,
         dom: null,
         position: [],
+        isVertical: false,
         setPosition: function (position) {
             this.position = position;
         },
@@ -47,6 +48,12 @@
         },
         getId: function () {
             return this.id;
+        },
+        setIsVertical: function (isVertical) {
+            this.isVertical = isVertical;
+        },
+        getIsVertical: function () {
+            return this.isVertical;
         },
         init: function () {
             this.id = getShipNewIndex();
