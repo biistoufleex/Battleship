@@ -14,6 +14,7 @@
         RIGHT_CLICK: false,
         currentPhase: "",
         phaseOrder: [],
+        decalage: 0,
         // garde une référence vers l'indice du tableau phaseOrder qui correspond à la phase de jeu pour le joueur humain
         playerTurnPhaseIndex: 2,
 
@@ -132,36 +133,41 @@
             // on est dans la phase de placement des bateau
             if (this.getPhase() === this.PHASE_INIT_PLAYER && e.target.classList.contains('cell')) {
                 var ship = this.players[0].fleet[this.players[0].activeShip];
+                let topForRight = (utils.eq(e.target.parentNode) - Math.floor(ship.getLife() / 2)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60);
+                let topForLeft = (utils.eq(e.target.parentNode)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60);
                 // si on a pas encore affiché (ajouté aux DOM) ce bateau
                 if (!ship.dom.parentNode) {
                     this.grid.appendChild(ship.dom);
                     // passage en arrière plan pour ne pas empêcher la capture des événements sur les cellules de la grille
                     ship.dom.style.zIndex = -1;
                 }                
+                console.log(this.players[0].fleet[this.players[0].activeShip].life);
+                console.log(this.decalage);
                 // décalage visuelle, le point d'ancrage du curseur est au milieu du bateau
                 if(this.RIGHT_CLICK){
+                   console.log(">");
                     ship.dom.style.height = "" + utils.CELL_SIZE * ship.life + "px";
-                    ship.dom.style.width =  "" + utils.CELL_SIZE + "px";
-    
-                    ship.dom.style.top = "" + (utils.eq(e.target.parentNode) - Math.floor(ship.getLife() / 2)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60) + "px";
-                    ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE  + "px";
+                    ship.dom.style.width  =  "" + utils.CELL_SIZE + "px";
+                    ship.dom.style.top    = "" + (topForRight - this.decalage) + "px";
+                    ship.dom.style.left   = "" + utils.eq(e.target) * utils.CELL_SIZE  + "px";
+                    
                 } else {
+                    console.log("<");
                     ship.dom.style.height = "" + utils.CELL_SIZE + "px";
-                    ship.dom.style.width = "" + utils.CELL_SIZE * ship.life + "px"; 
-
-                    ship.dom.style.top = "" + (utils.eq(e.target.parentNode)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60) + "px";
-                    ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE - Math.floor(ship.getLife() / 2) * utils.CELL_SIZE + "px";
+                    ship.dom.style.width  = "" + utils.CELL_SIZE * ship.life + "px"; 
+                    ship.dom.style.top    = "" + (topForLeft - this.decalage) + "px" ;
+                    ship.dom.style.left   = "" + utils.eq(e.target) * utils.CELL_SIZE - Math.floor(ship.getLife() / 2) * utils.CELL_SIZE + "px";
                 }
             }
         },
         handleRightClick: function (e){
             e.preventDefault();
-            console.log('clique droit');
             this.RIGHT_CLICK = this.RIGHT_CLICK ? false : true;
         },
         handleClick: function (e) {
             // self garde une référence vers "this" en cas de changement de scope
             var self = this;
+            var ship = this.players[0].fleet[this.players[0].activeShip];
             
             // si on a cliqué sur une cellule (délégation d'événement)
             if (e.target.classList.contains('cell')) {
@@ -169,6 +175,12 @@
                 if (this.getPhase() === this.PHASE_INIT_PLAYER) {
                     // on enregistre la position du bateau, si cela se passe bien (la fonction renvoie true) on continue
                     if (this.players[0].setActiveShipPosition(utils.eq(e.target), utils.eq(e.target.parentNode))) {
+                        console.log("click : " + this.RIGHT_CLICK);
+                        if (this.RIGHT_CLICK) {
+                             this.decalage += (ship.getLife() - 1) * 60;
+                             this.RIGHT_CLICK = false;
+                        }
+                    
                         // et on passe au bateau suivant (si il n'y en plus la fonction retournera false)
                         if (!this.players[0].activateNextShip()) {
                             this.wait();
