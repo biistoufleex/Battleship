@@ -122,30 +122,35 @@
         },
         addListeners: function () {
             // on ajoute des acouteur uniquement sur la grid (délégation d'événement)
+            this.grid.addEventListener('contextmenu', _.bind(this.handleRightClick, this))
             this.grid.addEventListener('mousemove', _.bind(this.handleMouseMove, this));
             this.grid.addEventListener('click', _.bind(this.handleClick, this));
+
+            
         },
         handleMouseMove: function (e) {
             // on est dans la phase de placement des bateau
             if (this.getPhase() === this.PHASE_INIT_PLAYER && e.target.classList.contains('cell')) {
                 var ship = this.players[0].fleet[this.players[0].activeShip];
-
                 // si on a pas encore affiché (ajouté aux DOM) ce bateau
                 if (!ship.dom.parentNode) {
                     this.grid.appendChild(ship.dom);
                     // passage en arrière plan pour ne pas empêcher la capture des événements sur les cellules de la grille
                     ship.dom.style.zIndex = -1;
-                }
-
+                }                
                 // décalage visuelle, le point d'ancrage du curseur est au milieu du bateau
                 ship.dom.style.top = "" + (utils.eq(e.target.parentNode)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60) + "px";
                 ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE - Math.floor(ship.getLife() / 2) * utils.CELL_SIZE + "px";
             }
         },
+        handleRightClick: function (e){
+            e.preventDefault();
+            console.log('clique droit');
+        },
         handleClick: function (e) {
             // self garde une référence vers "this" en cas de changement de scope
             var self = this;
-
+            
             // si on a cliqué sur une cellule (délégation d'événement)
             if (e.target.classList.contains('cell')) {
                 // si on est dans la phase de placement des bateau
