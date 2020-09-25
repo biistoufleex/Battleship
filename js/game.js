@@ -143,6 +143,7 @@
                     ship.dom.style.height = "" + utils.CELL_SIZE * ship.life + "px";
                     ship.dom.style.width =  "" + utils.CELL_SIZE + "px";
     
+                    console.log(utils.eq(e.target.parentNode));
                     ship.dom.style.top = "" + (utils.eq(e.target.parentNode) - Math.floor(ship.getLife() / 2)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60) + "px";
                     ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE  + "px";
                 } else {
