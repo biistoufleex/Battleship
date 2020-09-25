@@ -53,11 +53,15 @@
             this.position = [];
 
             this.dom = document.createElement('div');
-            this.dom.style.height = "" + utils.CELL_SIZE + "px";
-            this.dom.style.width = "" + utils.CELL_SIZE * this.life + "px";
+            // this.dom.style.height = "" + utils.CELL_SIZE + "px";
+            // this.dom.style.width = "" + utils.CELL_SIZE * this.life + "px"; 
             this.dom.style.position = "relative";
             this.dom.style.opacity = "0.8";
             this.dom.style.backgroundColor = this.color;
+
+            // position verticale
+            this.dom.style.height = "" + utils.CELL_SIZE * this.life + "px";
+            this.dom.style.width =  "" + utils.CELL_SIZE + "px"; 
         }
     };
 
