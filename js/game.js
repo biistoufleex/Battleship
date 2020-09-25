@@ -138,8 +138,12 @@
                 }
 
                 // décalage visuelle, le point d'ancrage du curseur est au milieu du bateau
-                ship.dom.style.top = "" + (utils.eq(e.target.parentNode)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60) + "px";
-                ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE - Math.floor(ship.getLife() / 2) * utils.CELL_SIZE + "px";
+                // ship.dom.style.top = "" + (utils.eq(e.target.parentNode)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60) + "px";
+                // ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE - Math.floor(ship.getLife() / 2) * utils.CELL_SIZE + "px";
+                
+                // position verticale
+                ship.dom.style.top = "" + (utils.eq(e.target.parentNode) - Math.floor(ship.getLife() / 2)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60) + "px";
+                ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE  + "px";
             }
         },
         handleClick: function (e) {
