@@ -41,7 +41,6 @@
         },
         setActiveShipPosition: function (x, y) {
             var ship = this.fleet[this.activeShip];
-            console.log(ship);
             var i = 0;
             // on passe les ship en transparent au click 
             ship.dom.style.opacity = '0';
