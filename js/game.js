@@ -11,7 +11,7 @@
         PHASE_PLAY_OPPONENT: "PHASE_PLAY_OPPONENT",
         PHASE_GAME_OVER: "PHASE_GAME_OVER",
         PHASE_WAITING: "waiting",
-
+        RIGHT_CLICK: false,
         currentPhase: "",
         phaseOrder: [],
         // garde une référence vers l'indice du tableau phaseOrder qui correspond à la phase de jeu pour le joueur humain
@@ -139,17 +139,25 @@
                     ship.dom.style.zIndex = -1;
                 }                
                 // décalage visuelle, le point d'ancrage du curseur est au milieu du bateau
-                // ship.dom.style.top = "" + (utils.eq(e.target.parentNode)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60) + "px";
-                // ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE - Math.floor(ship.getLife() / 2) * utils.CELL_SIZE + "px";
-                
-                // position verticale
-                ship.dom.style.top = "" + (utils.eq(e.target.parentNode) - Math.floor(ship.getLife() / 2)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60) + "px";
-                ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE  + "px";
+                if(this.RIGHT_CLICK){
+                    ship.dom.style.height = "" + utils.CELL_SIZE * ship.life + "px";
+                    ship.dom.style.width =  "" + utils.CELL_SIZE + "px";
+    
+                    ship.dom.style.top = "" + (utils.eq(e.target.parentNode) - Math.floor(ship.getLife() / 2)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60) + "px";
+                    ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE  + "px";
+                } else {
+                    ship.dom.style.height = "" + utils.CELL_SIZE + "px";
+                    ship.dom.style.width = "" + utils.CELL_SIZE * ship.life + "px"; 
+
+                    ship.dom.style.top = "" + (utils.eq(e.target.parentNode)) * utils.CELL_SIZE - (600 + this.players[0].activeShip * 60) + "px";
+                    ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE - Math.floor(ship.getLife() / 2) * utils.CELL_SIZE + "px";
+                }
             }
         },
         handleRightClick: function (e){
             e.preventDefault();
             console.log('clique droit');
+            this.RIGHT_CLICK = this.RIGHT_CLICK ? false : true;
         },
         handleClick: function (e) {
             // self garde une référence vers "this" en cas de changement de scope
