@@ -42,6 +42,10 @@
         setActiveShipPosition: function (x, y) {
             var ship = this.fleet[this.activeShip];
             var i = 0;
+
+            if(this.grid[y][x] !== 0 || x < 2 || x + ship.getLife() > 12){
+                return false;
+            }
             // on passe les ship en transparent au click 
             ship.dom.style.opacity = '0';
             while (i < ship.getLife()) {
