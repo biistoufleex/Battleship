@@ -141,18 +141,16 @@
                     // passage en arrière plan pour ne pas empêcher la capture des événements sur les cellules de la grille
                     ship.dom.style.zIndex = -1;
                 }                
-                console.log(this.players[0].fleet[this.players[0].activeShip].life);
-                console.log(this.decalage);
                 // décalage visuelle, le point d'ancrage du curseur est au milieu du bateau
                 if(this.RIGHT_CLICK){
-                   console.log(">");
+              
                     ship.dom.style.height = "" + utils.CELL_SIZE * ship.life + "px";
                     ship.dom.style.width  =  "" + utils.CELL_SIZE + "px";
                     ship.dom.style.top    = "" + (topForRight - this.decalage) + "px";
                     ship.dom.style.left   = "" + utils.eq(e.target) * utils.CELL_SIZE  + "px";
                     
                 } else {
-                    console.log("<");
+                   
                     ship.dom.style.height = "" + utils.CELL_SIZE + "px";
                     ship.dom.style.width  = "" + utils.CELL_SIZE * ship.life + "px"; 
                     ship.dom.style.top    = "" + (topForLeft - this.decalage) + "px" ;

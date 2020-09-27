@@ -35,26 +35,28 @@
                     randomX = getRandomInt(0,9 - ship.life);
                 }
             }
+            function retryWillFail(ship, that) {
+                let ok;
+                randomXY(ship);
+                ok = that.canOrNot(randomX, randomY, randomClick, ship, that.grid);
+                if (ok) {
+                    return ok
+                } else {
+                    console.log('fail');
+                    retryWillFail(ship, that);
+                }
+            }
             var randomX, randomY, randomClick;
             
-            // pour tout les bateaux
             this.fleet.forEach(function (ship, i) {
-                // console.log('i: ' + i);
-                // console.log(ship);
-         
-                randomXY(ship);
-         
-                let positionOk = false;
-                while (!positionOk) {
-                    positionOk = this.canOrNot(randomX, randomY, randomClick, ship, this.grid);
-                    randomXY(ship)
-                }
-
+                
+                retryWillFail(ship, this);
                 // console.log(ship.getLife());
                 if (randomClick) {
                     let j=0;
+                    
                     while (j < ship.getLife()) {
-                        this.grid[randomY+ j][randomX]  = ship.getId();
+                        this.grid[randomY+ j][randomX] = ship.getId();
                         ship.position.push([randomY+j, randomX]);
                         j += 1;
                     }
