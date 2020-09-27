@@ -17,21 +17,59 @@
                 });
             }, 2000);
         },
-        areShipsOk: function (callback) {
-            var i = 0;
-            var j;
+        areShipsOk: function () {
+            console.log(this.grid);
 
-            this.fleet[i].forEach(function (ship, i) {
-                j = 0;
-                while (j < ship.life) {
-                    this.grid[i][j] = ship.getId();
-                    j += 1;
+            function getRandomInt(min, max) {
+                min = Math.ceil(min);
+                max = Math.floor(max);
+                return Math.floor(Math.random() * (max - min) + min);
+            }
+            function randomXY(ship) {
+                randomClick = getRandomInt(0,2);
+                if(randomClick){
+                    randomY = getRandomInt(0,9 - ship.life);
+                    randomX = getRandomInt(0,9);
+                } else {
+                    randomY = getRandomInt(0,9);
+                    randomX = getRandomInt(0,9 - ship.life);
                 }
+            }
+            var randomX, randomY, randomClick;
+            
+            // pour tout les bateaux
+            this.fleet.forEach(function (ship, i) {
+                // console.log('i: ' + i);
+                // console.log(ship);
+         
+                randomXY(ship);
+         
+                let positionOk = false;
+                while (!positionOk) {
+                    positionOk = this.canOrNot(randomX, randomY, randomClick, ship, this.grid);
+                    randomXY(ship)
+                }
+
+                // console.log(ship.getLife());
+                if (randomClick) {
+                    let j=0;
+                    while (j < ship.getLife()) {
+                        this.grid[randomY+ j][randomX]  = ship.getId();
+                        ship.position.push([randomY+j, randomX]);
+                        j += 1;
+                    }
+                } else {
+                    let i=0;
+                    while (i < ship.getLife()) {
+                        this.grid[randomY][randomX + i]  = ship.getId();
+                        ship.position.push([randomY, randomX + i]);
+                        i += 1;
+                    }
+                }
+                // console.log(this.grid);
             }, this);
 
-            setTimeout(function () {
-                callback();
-            }, 500);
+        
         }
     });
 

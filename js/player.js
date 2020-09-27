@@ -83,6 +83,27 @@
 
             return true;
         },
+        canOrNot: function (x,y,click, currentShip, currentGrid) {
+            let erreur = false;
+            console.log(currentGrid);
+
+            if(click){
+                for(let z= 0; z < currentShip.getLife(); z++){
+                    if(this.grid[y+z][x] !== 0 || y < 0 || y + currentShip.getLife() > 10){
+                        erreur = true;
+                    }
+                }
+                if(erreur) return false;
+            } else { 
+                for(let z= 0; z < currentShip.getLife(); z++){
+                    if(this.grid[y][x+z] !== 0 || x < 0 || x + currentShip.getLife() > 10){
+                        erreur = true;
+                    }
+                }
+                if(erreur) return false;
+            }
+            return true
+        },
         clearPreview: function () {
             this.fleet.forEach(function (ship) {
                 if (sheep.dom.parentNode) {
