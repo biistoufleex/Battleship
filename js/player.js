@@ -82,21 +82,33 @@
         canOrNot: function (x,y,click, currentShip, currentGrid) {
             let erreur = false;
 
-            if(click){
-                for(let z= 0; z < currentShip.getLife(); z++){
-                    if(this.grid[y+z][x] !== 0 || y < 0 || y + currentShip.getLife() > 10){
-                        erreur = true;
+            try {
+                
+                if(click){
+                    for(let z= 0; z < currentShip.getLife(); z++){
+                       
+                        if(this.grid[y+z][x] !== 0 || y < 0 || y + currentShip.getLife() > 10){
+    
+                            erreur = true;
+                        }
                     }
-                }
-                if(erreur) return false;
-            } else { 
-                for(let z= 0; z < currentShip.getLife(); z++){
-                    if(this.grid[y][x+z] !== 0 || x < 0 || x + currentShip.getLife() > 10){
-                        erreur = true;
+                    if(erreur) return false;
+                } else { 
+                    for(let z= 0; z < currentShip.getLife(); z++){
+    
+                        if(this.grid[y][x+z] !== 0 || x < 0 || x + currentShip.getLife() > 10){
+    
+                            erreur = true;
+                        }
                     }
+                    if(erreur) return false;
                 }
-                if(erreur) return false;
+            } catch (error) {
+                console.log(error);
+                console.log(this.grid);
+                return false;
             }
+
             return true
         },
         clearPreview: function () {
