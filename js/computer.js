@@ -18,7 +18,6 @@
             }, 2000);
         },
         areShipsOk: function () {
-            console.log(this.grid);
 
             function getRandomInt(min, max) {
                 min = Math.ceil(min);
@@ -39,8 +38,6 @@
             
             // pour tout les bateaux
             this.fleet.forEach(function (ship, i) {
-                // console.log('i: ' + i);
-                // console.log(ship);
          
                 randomXY(ship);
          
@@ -50,7 +47,6 @@
                     randomXY(ship)
                 }
 
-                // console.log(ship.getLife());
                 if (randomClick) {
                     let j=0;
                     while (j < ship.getLife()) {
@@ -66,10 +62,7 @@
                         i += 1;
                     }
                 }
-                // console.log(this.grid);
             }, this);
-
-        
         }
     });
 

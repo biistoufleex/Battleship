@@ -89,10 +89,10 @@
             case this.PHASE_INIT_OPPONENT:
                 this.wait();
                 utils.info("En attente de votre adversaire");
-                this.players[1].areShipsOk(function () {
-                    self.stopWaiting();
-                    self.goNextPhase();
-                });
+                this.players[1].areShipsOk();
+                self.stopWaiting();
+                self.goNextPhase();
+                console.log(this.players[1].grid);
                 break;
             case this.PHASE_PLAY_PLAYER:
                 utils.info("A vous de jouer, choisissez une case !");
@@ -141,18 +141,17 @@
                     // passage en arrière plan pour ne pas empêcher la capture des événements sur les cellules de la grille
                     ship.dom.style.zIndex = -1;
                 }                
-                console.log(this.players[0].fleet[this.players[0].activeShip].life);
-                console.log(this.decalage);
+            
                 // décalage visuelle, le point d'ancrage du curseur est au milieu du bateau
                 if(this.RIGHT_CLICK){
-                   console.log(">");
+            
                     ship.dom.style.height = "" + utils.CELL_SIZE * ship.life + "px";
                     ship.dom.style.width  =  "" + utils.CELL_SIZE + "px";
                     ship.dom.style.top    = "" + (topForRight - this.decalage) + "px";
                     ship.dom.style.left   = "" + utils.eq(e.target) * utils.CELL_SIZE  + "px";
                     
                 } else {
-                    console.log("<");
+           
                     ship.dom.style.height = "" + utils.CELL_SIZE + "px";
                     ship.dom.style.width  = "" + utils.CELL_SIZE * ship.life + "px"; 
                     ship.dom.style.top    = "" + (topForLeft - this.decalage) + "px" ;
@@ -175,10 +174,9 @@
                 if (this.getPhase() === this.PHASE_INIT_PLAYER) {
                     // on enregistre la position du bateau, si cela se passe bien (la fonction renvoie true) on continue
                     if (this.players[0].setActiveShipPosition(utils.eq(e.target), utils.eq(e.target.parentNode),this.RIGHT_CLICK)) {
-                        console.log("click : " + this.RIGHT_CLICK);
+             
                         if (this.RIGHT_CLICK) {
                              this.decalage += (ship.getLife() - 1) * 60;
-                            //  this.RIGHT_CLICK = false;
                         }
                     
                         // et on passe au bateau suivant (si il n'y en plus la fonction retournera false)
@@ -218,7 +216,12 @@
             if (this.currentPhase === this.PHASE_PLAY_OPPONENT) {
                 msg += "Votre adversaire vous a... ";
             }
-
+            
+            if (this.currentPhase === this.PHASE_PLAY_PLAYER) {
+                if (self.players[0].tries[line][col] !== 0) {
+                    msg += 'Vous avez deja tiré ici et vous aviez... ';
+                }
+            }
             // on demande à l'attaqué si il a un bateaux à la position visée
             // le résultat devra être passé en paramètre à la fonction de callback (3e paramètre)
             target.receiveAttack(col, line, function (hasSucceed) {
@@ -227,7 +230,8 @@
                 } else {
                     msg += "Manqué...";
                 }
-
+                
+                // self.players[0].renderTries(self.grid);
                 utils.info(msg);
 
                 // on invoque la fonction callback (4e paramètre passé à la méthode fire)
@@ -238,8 +242,15 @@
                 // histoire de laisser le temps au joueur de lire les message affiché
                 setTimeout(function () {
                     self.stopWaiting();
-                    self.goNextPhase();
-                }, 1000);
+                    self.players[0].renderTries(self.grid);
+                    if (hasSucceed) {
+                        this.currentPhase = this.PHASE_PLAY_PLAYER;
+                        msg = "rejoue !";
+                        utils.info(msg);
+                    } else {
+                        self.goNextPhase();
+                    }
+                }, 2000);
             });
 
         },

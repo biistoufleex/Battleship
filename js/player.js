@@ -35,13 +35,11 @@
 
             if (this.grid[line][col] !== 0) {
                 succeed = true;
-                this.grid[line][col] = 0;
             }
             callback.call(undefined, succeed);
         },
         setActiveShipPosition: function (x, y, RIGHT_CLICK) {
             var ship = this.fleet[this.activeShip];
-            console.log(this.activeShip);
             var i = 0;
             var j = 0;
             // console.log(RIGHT_CLICK);
@@ -78,14 +76,11 @@
             
             // on passe les ship en transparent au click 
             ship.dom.style.opacity = '0';
-            
-            console.log(this.grid);
-
+        
             return true;
         },
         canOrNot: function (x,y,click, currentShip, currentGrid) {
             let erreur = false;
-            console.log(currentGrid);
 
             if(click){
                 for(let z= 0; z < currentShip.getLife(); z++){
