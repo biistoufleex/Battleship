@@ -43,7 +43,7 @@
                 this.PHASE_PLAY_OPPONENT,
                 this.PHASE_GAME_OVER
             ];
-            this.playerTurnPhaseIndex = 0;
+            // this.playerTurnPhaseIndex = 2;
 
             // initialise les joueurs
             this.setupPlayers();
@@ -77,32 +77,34 @@
             }
 
             switch (this.currentPhase) {
-            case this.PHASE_GAME_OVER:
-                // detection de la fin de partie
-                if (!this.gameIsOver()) {
-                    // le jeu n'est pas terminé on recommence un tour de jeu
-                    this.currentPhase = this.phaseOrder[this.playerTurnPhaseIndex];
-                }
-            case this.PHASE_INIT_PLAYER:
-                utils.info("Placez vos bateaux");
-                break;
-            case this.PHASE_INIT_OPPONENT:
-                this.wait();
-                utils.info("En attente de votre adversaire");
-                this.players[1].areShipsOk();
-                self.stopWaiting();
-                self.goNextPhase();
-                console.log(this.players[1].grid);
-                break;
-            case this.PHASE_PLAY_PLAYER:
-                utils.info("A vous de jouer, choisissez une case !");
-                break;
-            case this.PHASE_PLAY_OPPONENT:
-                utils.info("A votre adversaire de jouer...");
-                this.players[1].play();
-                break;
-            }
+                case this.PHASE_GAME_OVER:
+                    // detection de la fin de partie
+                    if (!this.gameIsOver()) {
+                        // le jeu n'est pas terminé on recommence un tour de jeu
+                        this.currentPhase = this.phaseOrder[this.playerTurnPhaseIndex];
+                
+                    }
+                case this.PHASE_INIT_PLAYER:
+                    utils.info("Placez vos bateaux");
+                    break;
+                case this.PHASE_INIT_OPPONENT:
+                    this.wait();
+                    utils.info("En attente de votre adversaire");
+                    this.players[1].areShipsOk();
+                    self.stopWaiting();
 
+                    self.goNextPhase();
+                    console.log('grid du bot: ');
+                    console.log(this.players[1].grid);
+                    break;
+                case this.PHASE_PLAY_PLAYER:
+                    utils.info("A vous de jouer, choisissez une case !");
+                    break;
+                case this.PHASE_PLAY_OPPONENT:
+                    utils.info("A votre adversaire de jouer...");
+                    this.players[1].play();
+                    break;
+            }
         },
         gameIsOver: function () {
             return false;
@@ -127,7 +129,7 @@
             this.grid.addEventListener('mousemove', _.bind(this.handleMouseMove, this));
             this.grid.addEventListener('click', _.bind(this.handleClick, this));
 
-            
+
         },
         handleMouseMove: function (e) {
             // on est dans la phase de placement des bateau
@@ -140,25 +142,25 @@
                     this.grid.appendChild(ship.dom);
                     // passage en arrière plan pour ne pas empêcher la capture des événements sur les cellules de la grille
                     ship.dom.style.zIndex = -1;
-                }                
+                }
                 // décalage visuelle, le point d'ancrage du curseur est au milieu du bateau
-                if(this.RIGHT_CLICK){
-              
+                if (this.RIGHT_CLICK) {
+
                     ship.dom.style.height = "" + utils.CELL_SIZE * ship.life + "px";
-                    ship.dom.style.width  =  "" + utils.CELL_SIZE + "px";
-                    ship.dom.style.top    = "" + (topForRight - this.decalage) + "px";
-                    ship.dom.style.left   = "" + utils.eq(e.target) * utils.CELL_SIZE  + "px";
-                    
+                    ship.dom.style.width = "" + utils.CELL_SIZE + "px";
+                    ship.dom.style.top = "" + (topForRight - this.decalage) + "px";
+                    ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE + "px";
+
                 } else {
-                   
+
                     ship.dom.style.height = "" + utils.CELL_SIZE + "px";
-                    ship.dom.style.width  = "" + utils.CELL_SIZE * ship.life + "px"; 
-                    ship.dom.style.top    = "" + (topForLeft - this.decalage) + "px" ;
-                    ship.dom.style.left   = "" + utils.eq(e.target) * utils.CELL_SIZE - Math.floor(ship.getLife() / 2) * utils.CELL_SIZE + "px";
+                    ship.dom.style.width = "" + utils.CELL_SIZE * ship.life + "px";
+                    ship.dom.style.top = "" + (topForLeft - this.decalage) + "px";
+                    ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE - Math.floor(ship.getLife() / 2) * utils.CELL_SIZE + "px";
                 }
             }
         },
-        handleRightClick: function (e){
+        handleRightClick: function (e) {
             e.preventDefault();
             this.RIGHT_CLICK = this.RIGHT_CLICK ? false : true;
         },
@@ -166,18 +168,18 @@
             // self garde une référence vers "this" en cas de changement de scope
             var self = this;
             var ship = this.players[0].fleet[this.players[0].activeShip];
-            
+
             // si on a cliqué sur une cellule (délégation d'événement)
             if (e.target.classList.contains('cell')) {
                 // si on est dans la phase de placement des bateau
                 if (this.getPhase() === this.PHASE_INIT_PLAYER) {
                     // on enregistre la position du bateau, si cela se passe bien (la fonction renvoie true) on continue
-                    if (this.players[0].setActiveShipPosition(utils.eq(e.target), utils.eq(e.target.parentNode),this.RIGHT_CLICK)) {
-             
+                    if (this.players[0].setActiveShipPosition(utils.eq(e.target), utils.eq(e.target.parentNode), this.RIGHT_CLICK)) {
+
                         if (this.RIGHT_CLICK) {
-                             this.decalage += (ship.getLife() - 1) * 60;
+                            this.decalage += (ship.getLife() - 1) * 60;
                         }
-                    
+
                         // et on passe au bateau suivant (si il n'y en plus la fonction retournera false)
                         if (!this.players[0].activateNextShip()) {
                             this.wait();
@@ -194,7 +196,7 @@
                             });
                         }
                     }
-                // si on est dans la phase de jeu (du joueur humain)
+                    // si on est dans la phase de jeu (du joueur humain)
                 } else if (this.getPhase() === this.PHASE_PLAY_PLAYER) {
                     this.players[0].play(utils.eq(e.target), utils.eq(e.target.parentNode));
                 }
@@ -215,7 +217,7 @@
             if (this.currentPhase === this.PHASE_PLAY_OPPONENT) {
                 msg += "Votre adversaire vous a... ";
             }
-            
+
             if (this.currentPhase === this.PHASE_PLAY_PLAYER) {
                 if (self.players[0].tries[line][col] !== 0) {
                     msg += 'Vous avez deja tiré ici et vous aviez... ';
@@ -229,7 +231,7 @@
                 } else {
                     msg += "Manqué...";
                 }
-                
+
                 // self.players[0].renderTries(self.grid);
                 utils.info(msg);
 

@@ -4,7 +4,7 @@
 (function (global) {
     "use strict";
 
-    var sheep = {dom: {parentNode: {removeChild: function () {}}}};
+    var sheep = { dom: { parentNode: { removeChild: function () { } } } };
 
     var player = {
         grid: [],
@@ -43,69 +43,67 @@
             var i = 0;
             var j = 0;
             // console.log(RIGHT_CLICK);
-            
+
             let erreur = false;
-            if(RIGHT_CLICK){
-                y = (this.fleet.length-1 == this.activeShip ? y-1 :y-2);
-                for(let z= 0; z < ship.getLife(); z++){
-                    if(this.grid[y+z][x] !== 0 || y < 0 || y + ship.getLife() > 10){
+            if (RIGHT_CLICK) {
+                y = (this.fleet.length - 1 == this.activeShip ? y - 1 : y - 2);
+                for (let z = 0; z < ship.getLife(); z++) {
+                    if (this.grid[y + z][x] !== 0 || y < 0 || y + ship.getLife() > 10) {
                         erreur = true;
                     }
                 }
-                if(erreur) return false;
+                if (erreur) return false;
                 while (j < ship.getLife()) {
-                    this.grid[y+ j][x]  = ship.getId();
-                    ship.position.push([y+j, x]);
+                    this.grid[y + j][x] = ship.getId();
+                    ship.position.push([y + j, x]);
                     j += 1;
                 }
                 ship.setIsVertical(true);
-            } else { 
-                x = (this.fleet.length-1 == this.activeShip ? x-1 : x-2);
-                for(let z= 0; z < ship.getLife(); z++){
-                    if(this.grid[y][x+z] !== 0 || x < 0 || x + ship.getLife() > 10){
+            } else {
+                x = (this.fleet.length - 1 == this.activeShip ? x - 1 : x - 2);
+                for (let z = 0; z < ship.getLife(); z++) {
+                    if (this.grid[y][x + z] !== 0 || x < 0 || x + ship.getLife() > 10) {
                         erreur = true;
                     }
                 }
-                if(erreur) return false;
+                if (erreur) return false;
                 while (i < ship.getLife()) {
-                    this.grid[y][x + i]  = ship.getId();
+                    this.grid[y][x + i] = ship.getId();
                     ship.position.push([y, x + i]);
                     i += 1;
                 }
             }
-            
+
             // on passe les ship en transparent au click 
             ship.dom.style.opacity = '0';
-        
+
             return true;
         },
-        canOrNot: function (x,y,click, currentShip, currentGrid) {
+        canOrNot: function (x, y, click, currentShip) {
             let erreur = false;
 
             try {
-                
-                if(click){
-                    for(let z= 0; z < currentShip.getLife(); z++){
-                       
-                        if(this.grid[y+z][x] !== 0 || y < 0 || y + currentShip.getLife() > 10){
-    
+
+                if (click) {
+                    for (let z = 0; z < currentShip.getLife(); z++) {
+
+                        if (this.grid[y + z][x] !== 0 || y < 0 || y + currentShip.getLife() > 10) {
+
                             erreur = true;
                         }
                     }
-                    if(erreur) return false;
-                } else { 
-                    for(let z= 0; z < currentShip.getLife(); z++){
-    
-                        if(this.grid[y][x+z] !== 0 || x < 0 || x + currentShip.getLife() > 10){
-    
+                    if (erreur) return false;
+                } else {
+                    for (let z = 0; z < currentShip.getLife(); z++) {
+
+                        if (this.grid[y][x + z] !== 0 || x < 0 || x + currentShip.getLife() > 10) {
+
                             erreur = true;
                         }
                     }
-                    if(erreur) return false;
+                    if (erreur) return false;
                 }
             } catch (error) {
-                console.log(error);
-                console.log(this.grid);
                 return false;
             }
 
@@ -152,10 +150,10 @@
         },
         colorMiniMap: function (grid) {
             console.log(this.grid);
-            for(let i = 0; i < this.fleet.length; i++){
-                if(this.fleet[i].isVertical){
+            for (let i = 0; i < this.fleet.length; i++) {
+                if (this.fleet[i].isVertical) {
                     for (let j = 0; j < this.fleet[i].position.length; j++) {
-                        if (i === this.fleet.length -1) {
+                        if (i === this.fleet.length - 1) {
                             grid.children[this.fleet[i].position[j][0]].children[this.fleet[i].position[j][1]].style.backgroundColor = this.fleet[i].color;
                         } else {
                             grid.children[this.fleet[i].position[j][0]].children[this.fleet[i].position[j][1]].style.backgroundColor = this.fleet[i].color;
@@ -163,7 +161,7 @@
                     }
                 } else {
                     for (let j = 0; j < this.fleet[i].position.length; j++) {
-                        if (i === this.fleet.length -1) {
+                        if (i === this.fleet.length - 1) {
                             grid.children[this.fleet[i].position[j][0]].children[this.fleet[i].position[j][1]].style.backgroundColor = this.fleet[i].color;
                         } else {
                             grid.children[this.fleet[i].position[j][0]].children[this.fleet[i].position[j][1]].style.backgroundColor = this.fleet[i].color;
