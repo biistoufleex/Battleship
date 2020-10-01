@@ -10,6 +10,7 @@
         fleet: [],
         game: null,
         play: function () {
+
             var self = this;
             setTimeout(function () {
                 self.game.fire(this, 0, 0, function (hasSucced) {

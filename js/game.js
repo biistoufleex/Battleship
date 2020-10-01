@@ -43,7 +43,6 @@
                 this.PHASE_PLAY_OPPONENT,
                 this.PHASE_GAME_OVER
             ];
-            this.playerTurnPhaseIndex = 0;
 
             // initialise les joueurs
             this.setupPlayers();
@@ -82,6 +81,9 @@
                 if (!this.gameIsOver()) {
                     // le jeu n'est pas terminé on recommence un tour de jeu
                     this.currentPhase = this.phaseOrder[this.playerTurnPhaseIndex];
+                    utils.info("A vous de jouer, choisissez une case !")
+                    break;
+
                 }
             case this.PHASE_INIT_PLAYER:
                 utils.info("Placez vos bateaux");
