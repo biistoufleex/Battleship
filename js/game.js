@@ -34,6 +34,11 @@
             // initialisation
             this.grid = document.querySelector('.board .main-grid');
             this.miniGrid = document.querySelector('.mini-grid');
+            this.battleship = document.querySelector('.battleship');
+            this.destroyer = document.querySelector('.destroyer');
+            this.submarine = document.querySelector('.submarine');
+            this.smallShip = document.querySelector('.small-ship');
+            
 
             // défini l'ordre des phase de jeu
             this.phaseOrder = [
@@ -83,7 +88,6 @@
                     this.currentPhase = this.phaseOrder[this.playerTurnPhaseIndex];
                     utils.info("A vous de jouer, choisissez une case !")
                     break;
-
                 }
             case this.PHASE_INIT_PLAYER:
                 utils.info("Placez vos bateaux");
@@ -214,6 +218,10 @@
                 ? this.players[1]
                 : this.players[0];
 
+            var actualPlayer = this.players.indexOf(from) === 0
+                ? this.players[0]
+                : this.players[1];
+
             if (this.currentPhase === this.PHASE_PLAY_OPPONENT) {
                 msg += "Votre adversaire vous a... ";
             }
@@ -226,6 +234,7 @@
             // on demande à l'attaqué si il a un bateaux à la position visée
             // le résultat devra être passé en paramètre à la fonction de callback (3e paramètre)
             target.receiveAttack(col, line, function (hasSucceed) {
+                
                 if (hasSucceed) {
                     msg += "Touché !";
                 } else {
@@ -244,10 +253,33 @@
                 setTimeout(function () {
                     self.stopWaiting();
                     self.players[0].renderTries(self.grid);
+                   
                     if (hasSucceed) {
-                        this.currentPhase = this.PHASE_PLAY_PLAYER;
-                        msg = "rejoue !";
-                        utils.info(msg);
+                        if (actualPlayer.tries[line][col] != 0) {
+                            
+                            let Id_bateau = target.grid[line][col];
+                            let bateau = target.getFromId(Id_bateau);
+                            bateau.setLife(bateau.life -1);
+                            console.log(bateau);
+                            if (bateau.life <= 0 ) {
+                                // changer classe css
+                            }
+                        }
+
+                        if (self.players.indexOf(from) === 0) {
+                            // si le joueur touche
+                            self.currentPhase = self.PHASE_PLAY_PLAYER;
+                            msg = "rejoue !";
+                            utils.info(msg);
+                        } else {
+                            // si le bot touche
+                            self.players[1].colorHit(self.miniGrid, col, line);
+                            self.currentPhase = self.PHASE_PLAY_OPPONENT;
+                            msg = "le bot rejoue !";
+                            utils.info(msg);
+                            self.players[1].play();
+                        }
+
                     } else {
                         self.goNextPhase();
                     }
