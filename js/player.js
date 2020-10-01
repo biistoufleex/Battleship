@@ -143,6 +143,12 @@
                 });
             });
         },
+        colorHit: function (grid, col, rid) {
+    
+            var node = grid.querySelector('.row:nth-child(' + (rid + 1) + ') .cell:nth-child(' + (col + 1) + ')');
+            node.style.backgroundColor = 'black';
+        
+        },
         renderShips: function (grid) {
         },
         setGame: function (game) {
@@ -170,6 +176,18 @@
                 }
             }
         },
+        getFromId: function (needed) {
+            const result = this.fleet.filter(val => val.id == needed);
+
+            return result[0];
+        },
+        testAlive: function () {
+            let result = this.fleet.filter(val => val.life == 0)
+            if (result.length >= 1) {
+                console.log('unb mort');
+            }
+            return result;
+        }
     };
 
     global.player = player;

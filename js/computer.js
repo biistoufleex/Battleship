@@ -10,30 +10,33 @@
         fleet: [],
         game: null,
         play: function () {
-            console.log('tries du bot: ');
-            console.log(this.tries);
             var self = this;
             setTimeout(function () {
-                self.game.fire(this, 0, 0, function (hasSucced) {
-                    self.tries[0][0] = hasSucced;
+                let colX  = self.getRandomInt(0,10);
+                let lineY = self.getRandomInt(0,10);
+                // let colX  =0;
+                // let lineY  =0;
+                while (self.tries[colX][lineY] !== 0) {
+                    lineY = self.getRandomInt(0,10);
+                    colX = self.getRandomInt(0,10);
+                }
+                console.log('tire: '+ colX, lineY);
+                self.game.fire(this, colX, lineY, function (hasSucced) {
+                    self.tries[colX][lineY] = hasSucced;
                 });
             }, 2000);
         },
         areShipsOk: function () {
+            var self = this;
 
-            function getRandomInt(min, max) {
-                min = Math.ceil(min);
-                max = Math.floor(max);
-                return Math.floor(Math.random() * (max - min) + min);
-            }
             function randomXY(ship) {
-                randomClick = getRandomInt(0, 2);
-                if (randomClick) {
-                    randomY = getRandomInt(0, 9 - ship.life);
-                    randomX = getRandomInt(0, 9);
+                randomClick = self.getRandomInt(0,2);
+                if(randomClick){
+                    randomY = self.getRandomInt(0,9 - ship.life);
+                    randomX = self.getRandomInt(0,9);
                 } else {
-                    randomY = getRandomInt(0, 9);
-                    randomX = getRandomInt(0, 9 - ship.life);
+                    randomY = self.getRandomInt(0,9);
+                    randomX = self.getRandomInt(0,9 - ship.life);
                 }
             }
             function retryWillFail(ship, that) {
@@ -69,6 +72,11 @@
                     }
                 }
             }, this);
+        },
+        getRandomInt: function(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min) + min);
         }
     });
 
