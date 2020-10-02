@@ -15,6 +15,7 @@
         currentPhase: "",
         phaseOrder: [],
         decalage: 0,
+        gameOver: false,
         // garde une référence vers l'indice du tableau phaseOrder qui correspond à la phase de jeu pour le joueur humain
         playerTurnPhaseIndex: 2,
 
@@ -24,7 +25,6 @@
         // garde une référence vers les noeuds correspondant du dom
         grid: null,
         miniGrid: null,
-
         // liste des joueurs
         players: [],
 
@@ -39,24 +39,82 @@
             this.submarine = document.querySelector('.submarine');
             this.smallShip = document.querySelector('.small-ship');
             
+            this.card = document.querySelector('.card');
 
+
+            this.phaseOrder = [];
+            self = this;
+            this.card.addEventListener('click', function (e) {
+                e = e || window.event;
+                e = e.target || e.srcElement;
+                if (e.nodeName === 'SPAN') {
+                    console.log(e.id);
+                    switch(e.id){
+                        case 'firstP-Moi':
+                            self.phaseOrder = [
+                                self.PHASE_INIT_PLAYER,
+                                self.PHASE_INIT_OPPONENT,
+                                self.PHASE_PLAY_PLAYER,
+                                self.PHASE_PLAY_OPPONENT,
+                                self.PHASE_GAME_OVER
+                            ];
+                            break;
+                        case 'firstP-Ordinateur':
+                            self.phaseOrder = [
+                                self.PHASE_INIT_OPPONENT,
+                                self.PHASE_INIT_PLAYER,
+                                self.PHASE_PLAY_OPPONENT,
+                                self.PHASE_PLAY_PLAYER,
+                                self.PHASE_GAME_OVER,
+                            ];
+                            break;
+                        case 'firstP-Aleatoire':
+                            let res = self.getRandomInt(0,2);
+                            if(res){
+                                utils.info('Vous adversaire commence');
+                                self.phaseOrder = [
+                                    self.PHASE_INIT_OPPONENT,
+                                    self.PHASE_INIT_PLAYER,
+                                    self.PHASE_PLAY_OPPONENT,
+                                    self.PHASE_PLAY_PLAYER,
+                                    self.PHASE_GAME_OVER,
+                                ];
+                            } else {
+                                utils.info('Vous commencez');
+                                self.phaseOrder = [
+                                    self.PHASE_INIT_PLAYER,
+                                    self.PHASE_INIT_OPPONENT,
+                                    self.PHASE_PLAY_PLAYER,
+                                    self.PHASE_PLAY_OPPONENT,
+                                    self.PHASE_GAME_OVER
+                                ];
+                            }
+                            break;
+                        default:
+                            self.phaseOrder = [
+                                self.PHASE_INIT_PLAYER,
+                                self.PHASE_INIT_OPPONENT,
+                                self.PHASE_PLAY_PLAYER,
+                                self.PHASE_PLAY_OPPONENT,
+                                self.PHASE_GAME_OVER
+                            ];
+                            break;
+                    }
+                    self.card.style.visibility='hidden';
+                    // initialise les joueurs
+                    self.setupPlayers();
+
+                    // ajoute les écouteur d'événement sur la grille
+                    self.addListeners();
+
+                    // c'est parti !
+                    self.goNextPhase();
+                }
+            });
             // défini l'ordre des phase de jeu
-            this.phaseOrder = [
-                this.PHASE_INIT_PLAYER,
-                this.PHASE_INIT_OPPONENT,
-                this.PHASE_PLAY_PLAYER,
-                this.PHASE_PLAY_OPPONENT,
-                this.PHASE_GAME_OVER
-            ];
+            
 
-            // initialise les joueurs
-            this.setupPlayers();
-
-            // ajoute les écouteur d'événement sur la grille
-            this.addListeners();
-
-            // c'est parti !
-            this.goNextPhase();
+            
         },
         setupPlayers: function () {
             // donne aux objets player et computer une réference vers l'objet game
@@ -79,14 +137,24 @@
             } else {
                 this.currentPhase = this.phaseOrder[0];
             }
-
+            console.log(this.currentPhase);
             switch (this.currentPhase) {
             case this.PHASE_GAME_OVER:
                 // detection de la fin de partie
                 if (!this.gameIsOver()) {
                     // le jeu n'est pas terminé on recommence un tour de jeu
                     this.currentPhase = this.phaseOrder[this.playerTurnPhaseIndex];
-                    utils.info("A vous de jouer, choisissez une case !")
+                    console.log(this.currentPhase);
+                    if(this.currentPhase == this.PHASE_PLAY_PLAYER){
+                        utils.info("A vous de jouer, choisissez une case !")
+                    } else {
+                        utils.info("A votre adversaire de jouer...");
+                        this.players[1].play();
+                    }
+                    break;
+                } else {
+                    utils.info("La partie est termine");
+                    // console.log('partie termine');
                     break;
                 }
             case this.PHASE_INIT_PLAYER:
@@ -108,10 +176,12 @@
                 this.players[1].play();
                 break;
             }
-
         },
         gameIsOver: function () {
-            return false;
+            return this.gameOver;
+        },
+        setgameOver : function() {
+            this.gameOver = true;
         },
         getPhase: function () {
             if (this.waiting) {
@@ -133,7 +203,7 @@
             this.grid.addEventListener('mousemove', _.bind(this.handleMouseMove, this));
             this.grid.addEventListener('click', _.bind(this.handleClick, this));
 
-            
+
         },
         handleMouseMove: function (e) {
             // on est dans la phase de placement des bateau
@@ -146,25 +216,25 @@
                     this.grid.appendChild(ship.dom);
                     // passage en arrière plan pour ne pas empêcher la capture des événements sur les cellules de la grille
                     ship.dom.style.zIndex = -1;
-                }                
+                }
                 // décalage visuelle, le point d'ancrage du curseur est au milieu du bateau
-                if(this.RIGHT_CLICK){
-              
+                if (this.RIGHT_CLICK) {
+
                     ship.dom.style.height = "" + utils.CELL_SIZE * ship.life + "px";
-                    ship.dom.style.width  =  "" + utils.CELL_SIZE + "px";
-                    ship.dom.style.top    = "" + (topForRight - this.decalage) + "px";
-                    ship.dom.style.left   = "" + utils.eq(e.target) * utils.CELL_SIZE  + "px";
-                    
+                    ship.dom.style.width = "" + utils.CELL_SIZE + "px";
+                    ship.dom.style.top = "" + (topForRight - this.decalage) + "px";
+                    ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE + "px";
+
                 } else {
-                   
+
                     ship.dom.style.height = "" + utils.CELL_SIZE + "px";
-                    ship.dom.style.width  = "" + utils.CELL_SIZE * ship.life + "px"; 
-                    ship.dom.style.top    = "" + (topForLeft - this.decalage) + "px" ;
-                    ship.dom.style.left   = "" + utils.eq(e.target) * utils.CELL_SIZE - Math.floor(ship.getLife() / 2) * utils.CELL_SIZE + "px";
+                    ship.dom.style.width = "" + utils.CELL_SIZE * ship.life + "px";
+                    ship.dom.style.top = "" + (topForLeft - this.decalage) + "px";
+                    ship.dom.style.left = "" + utils.eq(e.target) * utils.CELL_SIZE - Math.floor(ship.getLife() / 2) * utils.CELL_SIZE + "px";
                 }
             }
         },
-        handleRightClick: function (e){
+        handleRightClick: function (e) {
             e.preventDefault();
             this.RIGHT_CLICK = this.RIGHT_CLICK ? false : true;
         },
@@ -172,18 +242,18 @@
             // self garde une référence vers "this" en cas de changement de scope
             var self = this;
             var ship = this.players[0].fleet[this.players[0].activeShip];
-            
+
             // si on a cliqué sur une cellule (délégation d'événement)
             if (e.target.classList.contains('cell')) {
                 // si on est dans la phase de placement des bateau
                 if (this.getPhase() === this.PHASE_INIT_PLAYER) {
                     // on enregistre la position du bateau, si cela se passe bien (la fonction renvoie true) on continue
-                    if (this.players[0].setActiveShipPosition(utils.eq(e.target), utils.eq(e.target.parentNode),this.RIGHT_CLICK)) {
-             
+                    if (this.players[0].setActiveShipPosition(utils.eq(e.target), utils.eq(e.target.parentNode), this.RIGHT_CLICK)) {
+
                         if (this.RIGHT_CLICK) {
-                             this.decalage += (ship.getLife() - 1) * 60;
+                            this.decalage += (ship.getLife() - 1) * 60;
                         }
-                    
+
                         // et on passe au bateau suivant (si il n'y en plus la fonction retournera false)
                         if (!this.players[0].activateNextShip()) {
                             this.wait();
@@ -200,7 +270,7 @@
                             });
                         }
                     }
-                // si on est dans la phase de jeu (du joueur humain)
+                    // si on est dans la phase de jeu (du joueur humain)
                 } else if (this.getPhase() === this.PHASE_PLAY_PLAYER) {
                     this.players[0].play(utils.eq(e.target), utils.eq(e.target.parentNode));
                 }
@@ -225,7 +295,7 @@
             if (this.currentPhase === this.PHASE_PLAY_OPPONENT) {
                 msg += "Votre adversaire vous a... ";
             }
-            
+
             if (this.currentPhase === this.PHASE_PLAY_PLAYER) {
                 if (self.players[0].tries[line][col] !== 0) {
                     msg += 'Vous avez deja tiré ici et vous aviez... ';
@@ -240,7 +310,7 @@
                 } else {
                     msg += "Manqué...";
                 }
-                
+
                 // self.players[0].renderTries(self.grid);
                 utils.info(msg);
 
@@ -253,16 +323,37 @@
                 setTimeout(function () {
                     self.stopWaiting();
                     self.players[0].renderTries(self.grid);
-                   
                     if (hasSucceed) {
+                        
                         if (actualPlayer.tries[line][col] != 0) {
                             
                             let Id_bateau = target.grid[line][col];
                             let bateau = target.getFromId(Id_bateau);
                             bateau.setLife(bateau.life -1);
-                            console.log(bateau);
+                            // console.log(bateau);
                             if (bateau.life <= 0 ) {
-                                // changer classe css
+                                switch(bateau.name){
+                                    case 'Battleship':
+                                        self.battleship.classList.add("sunk");
+                                        break;
+                                    case 'Destroyer':
+                                        self.destroyer.classList.add("sunk");
+                                        break;
+                                    case 'Submarine':
+                                        self.submarine.classList.add("sunk");
+                                        break;
+                                    case 'small-ship':
+                                        self.smallShip.classList.add("sunk");
+                                        break;
+                                }
+                            }
+
+                            let res = target.testAlive();
+                            if(res.length == target.fleet.length){
+                                self.setgameOver();
+                                self.currentPhase = self.PHASE_PLAY_OPPONENT;
+                                self.goNextPhase();
+                                return;
                             }
                         }
 
@@ -292,7 +383,12 @@
         },
         renderMiniMap: function () {
             this.players[0].colorMiniMap(this.miniGrid);
-        }
+        },
+        getRandomInt: function(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min) + min);
+        },
     };
 
     // point d'entrée

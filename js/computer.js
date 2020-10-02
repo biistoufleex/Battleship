@@ -10,13 +10,12 @@
         fleet: [],
         game: null,
         play: function () {
-
             var self = this;
             setTimeout(function () {
-                // let colX  = self.getRandomInt(0,10);
-                // let lineY = self.getRandomInt(0,10);
-                let colX  =0;
-                let lineY  =0;
+                let colX  = self.getRandomInt(0,10);
+                let lineY = self.getRandomInt(0,10);
+                // let colX  =0;
+                // let lineY  =0;
                 while (self.tries[colX][lineY] !== 0) {
                     lineY = self.getRandomInt(0,10);
                     colX = self.getRandomInt(0,10);
@@ -43,32 +42,31 @@
             function retryWillFail(ship, that) {
                 let ok;
                 randomXY(ship);
-                ok = that.canOrNot(randomX, randomY, randomClick, ship, that.grid);
+                ok = that.canOrNot(randomX, randomY, randomClick, ship);
                 if (ok) {
                     return ok
                 } else {
-                    console.log('fail');
                     retryWillFail(ship, that);
                 }
             }
             var randomX, randomY, randomClick;
-            
+
             this.fleet.forEach(function (ship, i) {
-                
+
                 retryWillFail(ship, this);
-                // console.log(ship.getLife());
+
                 if (randomClick) {
-                    let j=0;
-                    
+                    let j = 0;
+
                     while (j < ship.getLife()) {
-                        this.grid[randomY+ j][randomX] = ship.getId();
-                        ship.position.push([randomY+j, randomX]);
+                        this.grid[randomY + j][randomX] = ship.getId();
+                        ship.position.push([randomY + j, randomX]);
                         j += 1;
                     }
                 } else {
-                    let i=0;
+                    let i = 0;
                     while (i < ship.getLife()) {
-                        this.grid[randomY][randomX + i]  = ship.getId();
+                        this.grid[randomY][randomX + i] = ship.getId();
                         ship.position.push([randomY, randomX + i]);
                         i += 1;
                     }

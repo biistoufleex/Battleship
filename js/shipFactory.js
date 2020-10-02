@@ -95,7 +95,7 @@
     refType[shipFactory.TYPE_BATTLESHIP] = {
         life: 5,
         name: "Battleship",
-        color: "#e60019"
+        color: "#e60019",
     };
     refType[shipFactory.TYPE_DESTROYER] = {
         life: 5,
