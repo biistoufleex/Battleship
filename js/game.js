@@ -28,9 +28,37 @@
         // liste des joueurs
         players: [],
 
+        // liste des sons
+        tir: new Audio('./sound/boom.mp3'),
+
+        hit: [   
+                new Audio('./sound/hit/formule1.mp3'),
+                new Audio('./sound/hit/playerSard.mp3'),
+                new Audio('./sound/hit/wow.mp3'),
+                new Audio('./sound/hit/wow2.mp3')
+            ],
+
+        miss :[   
+                new Audio('./sound/miss/brawh.mp3'),
+                new Audio('./sound/miss/concentreToi.mp3'),
+                new Audio('./sound/miss/fart.mp3'),
+                new Audio('./sound/miss/honteux.mp3'),
+                new Audio('./sound/miss/nein.mp3'),
+                new Audio('./sound/miss/nop.mp3')
+            ], 
+    
         // lancement du jeu
         init: function () {
 
+            //on protege nos oreilles
+            this.tir.volume=0.1;
+            this.hit.forEach(e => {
+                e.volume=0.1;
+            });
+            this.miss.forEach(e => {
+                e.volume=0.1;
+            });
+    
             // initialisation
             this.grid = document.querySelector('.board .main-grid');
             this.miniGrid = document.querySelector('.mini-grid');
@@ -279,10 +307,12 @@
         // fonction utlisée par les objets représentant les joueurs (ordinateur ou non)
         // pour placer un tir et obtenir de l'adversaire l'information de réusssite ou non du tir
         fire: function (from, col, line, callback) {
+            
+            this.tir.play();
             this.wait();
             var self = this;
             var msg = "";
-
+        
             // determine qui est l'attaquant et qui est attaqué
             var target = this.players.indexOf(from) === 0
                 ? this.players[1]
@@ -304,19 +334,24 @@
             // on demande à l'attaqué si il a un bateaux à la position visée
             // le résultat devra être passé en paramètre à la fonction de callback (3e paramètre)
             target.receiveAttack(col, line, function (hasSucceed) {
+                setTimeout(function () {
                 
                 if (hasSucceed) {
+                    self.hit[self.getRandomInt(0, self.hit.length)].play();
                     msg += "Touché !";
                 } else {
+                    self.miss[self.getRandomInt(0, self.miss.length)].play();
                     msg += "Manqué...";
                 }
-
+                
+                
                 // self.players[0].renderTries(self.grid);
                 utils.info(msg);
-
+                
                 // on invoque la fonction callback (4e paramètre passé à la méthode fire)
                 // pour transmettre à l'attaquant le résultat de l'attaque
                 callback(hasSucceed);
+            }, 1000);
 
                 // on fait une petite pause avant de continuer...
                 // histoire de laisser le temps au joueur de lire les message affiché
