@@ -31,34 +31,34 @@
         // liste des sons
         tir: new Audio('./sound/boom.mp3'),
 
-        hit: [   
-                new Audio('./sound/hit/formule1.mp3'),
-                new Audio('./sound/hit/playerSard.mp3'),
-                new Audio('./sound/hit/wow.mp3'),
-                new Audio('./sound/hit/wow2.mp3')
-            ],
+        hit: [
+            new Audio('./sound/hit/formule1.mp3'),
+            new Audio('./sound/hit/playerSard.mp3'),
+            new Audio('./sound/hit/wow.mp3'),
+            new Audio('./sound/hit/wow2.mp3')
+        ],
 
-        miss :[   
-                new Audio('./sound/miss/brawh.mp3'),
-                new Audio('./sound/miss/concentreToi.mp3'),
-                new Audio('./sound/miss/fart.mp3'),
-                new Audio('./sound/miss/honteux.mp3'),
-                new Audio('./sound/miss/nein.mp3'),
-                new Audio('./sound/miss/nop.mp3')
-            ], 
-    
+        miss: [
+            new Audio('./sound/miss/brawh.mp3'),
+            new Audio('./sound/miss/concentreToi.mp3'),
+            new Audio('./sound/miss/fart.mp3'),
+            new Audio('./sound/miss/honteux.mp3'),
+            new Audio('./sound/miss/nein.mp3'),
+            new Audio('./sound/miss/nop.mp3')
+        ],
+
         // lancement du jeu
         init: function () {
 
             //on protege nos oreilles
-            this.tir.volume=0.1;
+            this.tir.volume = 0.1;
             this.hit.forEach(e => {
-                e.volume=0.1;
+                e.volume = 0.1;
             });
             this.miss.forEach(e => {
-                e.volume=0.1;
+                e.volume = 0.1;
             });
-    
+
             // initialisation
             this.grid = document.querySelector('.board .main-grid');
             this.miniGrid = document.querySelector('.mini-grid');
@@ -66,7 +66,7 @@
             this.destroyer = document.querySelector('.destroyer');
             this.submarine = document.querySelector('.submarine');
             this.smallShip = document.querySelector('.small-ship');
-            
+
             this.card = document.querySelector('.card');
 
 
@@ -77,7 +77,7 @@
                 e = e.target || e.srcElement;
                 if (e.nodeName === 'SPAN') {
                     console.log(e.id);
-                    switch(e.id){
+                    switch (e.id) {
                         case 'firstP-Moi':
                             self.phaseOrder = [
                                 self.PHASE_INIT_PLAYER,
@@ -97,8 +97,8 @@
                             ];
                             break;
                         case 'firstP-Aleatoire':
-                            let res = self.getRandomInt(0,2);
-                            if(res){
+                            let res = self.getRandomInt(0, 2);
+                            if (res) {
                                 utils.info('Vous adversaire commence');
                                 self.phaseOrder = [
                                     self.PHASE_INIT_OPPONENT,
@@ -128,7 +128,7 @@
                             ];
                             break;
                     }
-                    self.card.style.visibility='hidden';
+                    self.card.style.visibility = 'hidden';
                     // initialise les joueurs
                     self.setupPlayers();
 
@@ -140,9 +140,9 @@
                 }
             });
             // défini l'ordre des phase de jeu
-            
 
-            
+
+
         },
         setupPlayers: function () {
             // donne aux objets player et computer une réference vers l'objet game
@@ -167,48 +167,48 @@
             }
             console.log(this.currentPhase);
             switch (this.currentPhase) {
-            case this.PHASE_GAME_OVER:
-                // detection de la fin de partie
-                if (!this.gameIsOver()) {
-                    // le jeu n'est pas terminé on recommence un tour de jeu
-                    this.currentPhase = this.phaseOrder[this.playerTurnPhaseIndex];
-                    console.log(this.currentPhase);
-                    if(this.currentPhase == this.PHASE_PLAY_PLAYER){
-                        utils.info("A vous de jouer, choisissez une case !")
+                case this.PHASE_GAME_OVER:
+                    // detection de la fin de partie
+                    if (!this.gameIsOver()) {
+                        // le jeu n'est pas terminé on recommence un tour de jeu
+                        this.currentPhase = this.phaseOrder[this.playerTurnPhaseIndex];
+                        console.log(this.currentPhase);
+                        if (this.currentPhase == this.PHASE_PLAY_PLAYER) {
+                            utils.info("A vous de jouer, choisissez une case !")
+                        } else {
+                            utils.info("A votre adversaire de jouer...");
+                            this.players[1].play();
+                        }
+                        break;
                     } else {
-                        utils.info("A votre adversaire de jouer...");
-                        this.players[1].play();
+                        utils.info("La partie est termine");
+                        // console.log('partie termine');
+                        break;
                     }
+                case this.PHASE_INIT_PLAYER:
+                    utils.info("Placez vos bateaux");
                     break;
-                } else {
-                    utils.info("La partie est termine");
-                    // console.log('partie termine');
+                case this.PHASE_INIT_OPPONENT:
+                    this.wait();
+                    utils.info("En attente de votre adversaire");
+                    this.players[1].areShipsOk();
+                    self.stopWaiting();
+                    self.goNextPhase();
+                    console.log(this.players[1].grid);
                     break;
-                }
-            case this.PHASE_INIT_PLAYER:
-                utils.info("Placez vos bateaux");
-                break;
-            case this.PHASE_INIT_OPPONENT:
-                this.wait();
-                utils.info("En attente de votre adversaire");
-                this.players[1].areShipsOk();
-                self.stopWaiting();
-                self.goNextPhase();
-                console.log(this.players[1].grid);
-                break;
-            case this.PHASE_PLAY_PLAYER:
-                utils.info("A vous de jouer, choisissez une case !");
-                break;
-            case this.PHASE_PLAY_OPPONENT:
-                utils.info("A votre adversaire de jouer...");
-                this.players[1].play();
-                break;
+                case this.PHASE_PLAY_PLAYER:
+                    utils.info("A vous de jouer, choisissez une case !");
+                    break;
+                case this.PHASE_PLAY_OPPONENT:
+                    utils.info("A votre adversaire de jouer...");
+                    this.players[1].play();
+                    break;
             }
         },
         gameIsOver: function () {
             return this.gameOver;
         },
-        setgameOver : function() {
+        setgameOver: function () {
             this.gameOver = true;
         },
         getPhase: function () {
@@ -307,12 +307,12 @@
         // fonction utlisée par les objets représentant les joueurs (ordinateur ou non)
         // pour placer un tir et obtenir de l'adversaire l'information de réusssite ou non du tir
         fire: function (from, col, line, callback) {
-            
+
             this.tir.play();
             this.wait();
             var self = this;
             var msg = "";
-        
+
             // determine qui est l'attaquant et qui est attaqué
             var target = this.players.indexOf(from) === 0
                 ? this.players[1]
@@ -335,23 +335,23 @@
             // le résultat devra être passé en paramètre à la fonction de callback (3e paramètre)
             target.receiveAttack(col, line, function (hasSucceed) {
                 setTimeout(function () {
-                
-                if (hasSucceed) {
-                    self.hit[self.getRandomInt(0, self.hit.length)].play();
-                    msg += "Touché !";
-                } else {
-                    self.miss[self.getRandomInt(0, self.miss.length)].play();
-                    msg += "Manqué...";
-                }
-                
-                
-                // self.players[0].renderTries(self.grid);
-                utils.info(msg);
-                
-                // on invoque la fonction callback (4e paramètre passé à la méthode fire)
-                // pour transmettre à l'attaquant le résultat de l'attaque
-                callback(hasSucceed);
-            }, 1000);
+
+                    if (hasSucceed) {
+                        self.hit[self.getRandomInt(0, self.hit.length)].play();
+                        msg += "Touché !";
+                    } else {
+                        self.miss[self.getRandomInt(0, self.miss.length)].play();
+                        msg += "Manqué...";
+                    }
+
+
+                    // self.players[0].renderTries(self.grid);
+                    utils.info(msg);
+
+                    // on invoque la fonction callback (4e paramètre passé à la méthode fire)
+                    // pour transmettre à l'attaquant le résultat de l'attaque
+                    callback(hasSucceed);
+                }, 1000);
 
                 // on fait une petite pause avant de continuer...
                 // histoire de laisser le temps au joueur de lire les message affiché
@@ -359,15 +359,15 @@
                     self.stopWaiting();
                     self.players[0].renderTries(self.grid);
                     if (hasSucceed) {
-                        
+
                         if (actualPlayer.tries[line][col] != 0) {
-                            
+
                             let Id_bateau = target.grid[line][col];
                             let bateau = target.getFromId(Id_bateau);
-                            bateau.setLife(bateau.life -1);
-                            // console.log(bateau);
+                            bateau.setLife(bateau.life - 1);
+
                             if (bateau.life <= 0 && target == self.players[0]) {
-                                switch(bateau.name){
+                                switch (bateau.name) {
                                     case 'Battleship':
                                         self.battleship.classList.add("sunk");
                                         break;
@@ -384,7 +384,7 @@
                             }
 
                             let res = target.testAlive();
-                            if(res.length == target.fleet.length){
+                            if (res.length == target.fleet.length) {
                                 self.setgameOver();
                                 self.currentPhase = self.PHASE_PLAY_OPPONENT;
                                 self.goNextPhase();
@@ -419,7 +419,7 @@
         renderMiniMap: function () {
             this.players[0].colorMiniMap(this.miniGrid);
         },
-        getRandomInt: function(min, max) {
+        getRandomInt: function (min, max) {
             min = Math.ceil(min);
             max = Math.floor(max);
             return Math.floor(Math.random() * (max - min) + min);
