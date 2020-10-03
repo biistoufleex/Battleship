@@ -366,7 +366,7 @@
                             let bateau = target.getFromId(Id_bateau);
                             bateau.setLife(bateau.life -1);
                             // console.log(bateau);
-                            if (bateau.life <= 0 ) {
+                            if (bateau.life <= 0 && target == self.players[0]) {
                                 switch(bateau.name){
                                     case 'Battleship':
                                         self.battleship.classList.add("sunk");
